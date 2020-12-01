@@ -16,7 +16,7 @@ payload={
     "password": "radware"
  }
 
-
+print("test")
 res = requests.post(login,data=json.dumps(payload),verify=False,headers=myheaders,auth=(switchuser,switchpassword))
 reposne_back = res.json()
 cookie = reposne_back["jsessionid"]
