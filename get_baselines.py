@@ -32,10 +32,20 @@ def GetBaseline():
     print(response_string)
     return response_string
 
-DP_Baselinse = GetBaseline()
+def CalculateBasline(baseline_output,number_of_devices,vector):
+    #print(baseline_output)
+    if vector == "icmp":
+        print("lol")
 
-udp_baselin = DP_Baselinse.splitlines()
-udp_baselin_rate = udp_baselin[3].split()
+
+
+
+DP_Baselinse = GetBaseline()
 print("\n"*3)
+CalculateBasline(DP_Baselinse,2,"icmp")
+
+# udp_baselin = DP_Baselinse.splitlines()
+# udp_baselin_rate = udp_baselin[3].split()
+# print("\n"*3)
 # print(udp_baselin_rate[1])
 
