@@ -35,4 +35,4 @@ udp_baselin = response.text.splitlines()
 udp_baselin_rate = udp_baselin[3].split()
 print("\n"*3)
 # print(udp_baselin_rate[1])
-
+print("maor")
