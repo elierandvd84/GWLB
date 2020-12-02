@@ -1,9 +1,13 @@
 import requests
+import paramiko
+import time
 import json
+import math
 from urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
-
+DP1_IP = "10.10.10.56"
+Global_ip = "44.239.210.66"
 def GetBaseline():
   
     #Login to vision with API
@@ -33,19 +37,63 @@ def GetBaseline():
     return response_string
 
 def CalculateBasline(baseline_output,number_of_devices,vector):
+    base_list = baseline_output.splitlines()
+    
     #print(baseline_output)
     if vector == "icmp":
-        print("lol")
+        value = base_list[1].split()
+        in_icmp = int(value[1])/number_of_devices
+        out_icmp = int(value[3])/number_of_devices
+        icmp_threhsold_in = math.floor(in_icmp)
+        icmp_threhsold_out = math.floor(out_icmp)
+        base_list[1] = " -icmp_in_bps_ipv4 " + \
+            str(icmp_threhsold_in)+" -icmp_out_bps_ipv4 " + str(icmp_threhsold_out)+" \\"
+        #print(base_list)
+        return base_list
 
+    if vector == "udp":
+        value = base_list[3].split()
+        in_udp = int(value[1])/number_of_devices
+        out_in_udp = int(value[3])/number_of_devices
+        udp_threhsold_in = math.floor(in_udp)
+        udp_threhsold_out = math.floor(out_in_udp)
+        base_list[3] = " -udp_in_bps_ipv4 " + \
+            str(udp_threhsold_in)+" -udp_out_bps_ipv4 " + str(udp_threhsold_out)+" \\"
+        print(base_list)
+        return base_list
+        
 
+def UpdateDPBaseline(baseline_template,dp_list):
+ 
+    username = "radware"
+    password = "radware123"
+
+    remote_conn_pre = paramiko.SSHClient()
+    remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    remote_conn_pre.connect(Global_ip, port=22, username=username,
+                            password=password,
+                            look_for_keys=False, allow_agent=False)
+
+    remote_conn = remote_conn_pre.invoke_shell()
+    output = remote_conn.recv(65535)
+    time.sleep(.5)
+    for line in baseline_template:
+        remote_conn.send(line)
+        # print(line)
+        time.sleep(0.2)
+        remote_conn.send("\r")
+    remote_conn.send("\r\n")
+    output = remote_conn.recv(6000)
+    print(output)
 
 
 DP_Baselinse = GetBaseline()
 print("\n"*3)
-CalculateBasline(DP_Baselinse,2,"icmp")
+base_template = CalculateBasline(DP_Baselinse,2,"udp")
 
-# udp_baselin = DP_Baselinse.splitlines()
-# udp_baselin_rate = udp_baselin[3].split()
-# print("\n"*3)
-# print(udp_baselin_rate[1])
+UpdateDPBaseline(base_template)
+    # udp_baselin = DP_Baselinse.splitlines()
+    # udp_baselin_rate = udp_baselin[3].split()
+    # print("\n"*3)
+    # print(udp_baselin_rate[1])
 
