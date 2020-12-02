@@ -7,7 +7,9 @@ from urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
 DP1_IP = "10.10.10.56"
-Global_ip = "44.239.210.66"
+Global_dp_ip = "44.239.210.66"
+Global_dp_ip2 = "44.237.142.246"
+
 def GetBaseline():
   
     #Login to vision with API
@@ -61,7 +63,7 @@ def CalculateBasline(baseline_output,number_of_devices,vector):
             str(udp_threhsold_in)+" -udp_out_bps_ipv4 " + str(udp_threhsold_out)+" \\"
         print(base_list)
         return base_list
-        
+
 
 def UpdateDPBaseline(baseline_template,dp_list):
  
@@ -90,10 +92,5 @@ def UpdateDPBaseline(baseline_template,dp_list):
 DP_Baselinse = GetBaseline()
 print("\n"*3)
 base_template = CalculateBasline(DP_Baselinse,2,"udp")
-
-UpdateDPBaseline(base_template)
-    # udp_baselin = DP_Baselinse.splitlines()
-    # udp_baselin_rate = udp_baselin[3].split()
-    # print("\n"*3)
-    # print(udp_baselin_rate[1])
-
+dp_list = [Global_dp_ip, Global_dp_ip2]
+UpdateDPBaseline(base_template, dp_list)
