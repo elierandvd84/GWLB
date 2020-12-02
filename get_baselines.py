@@ -61,18 +61,18 @@ def CalculateBasline(baseline_output,number_of_devices,vector):
         udp_threhsold_out = math.floor(out_in_udp)
         base_list[3] = " -udp_in_bps_ipv4 " + \
             str(udp_threhsold_in)+" -udp_out_bps_ipv4 " + str(udp_threhsold_out)+" \\"
-        print(base_list)
+        #print(base_list)
         return base_list
 
 
-def UpdateDPBaseline(baseline_template,dp_list):
+def UpdateDPBaseline(baseline_template,dp_ip):
  
     username = "radware"
     password = "radware123"
 
     remote_conn_pre = paramiko.SSHClient()
     remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    remote_conn_pre.connect(Global_ip, port=22, username=username,
+    remote_conn_pre.connect(dp_ip, port=22, username=username,
                             password=password,
                             look_for_keys=False, allow_agent=False)
 
@@ -86,11 +86,23 @@ def UpdateDPBaseline(baseline_template,dp_list):
         remote_conn.send("\r")
     remote_conn.send("\r\n")
     output = remote_conn.recv(6000)
+    #remote_conn.close()
     print(output)
+    print("\n\n")
 
 
+def configureDpBaseline(dp_list,base_temp):
+    
+    for ip in range(len(dp_list)):
+        print("configure DP: "+str(dp_list[ip])+"\n\n\n")
+        #print(base_temp)
+        time.sleep(2)
+        UpdateDPBaseline(base_temp, dp_list[ip])
+
+
+dp_list = [Global_dp_ip, Global_dp_ip2]
 DP_Baselinse = GetBaseline()
 print("\n"*3)
 base_template = CalculateBasline(DP_Baselinse,2,"udp")
-dp_list = [Global_dp_ip, Global_dp_ip2]
-UpdateDPBaseline(base_template, dp_list)
+configureDpBaseline(dp_list, base_template)
+# UpdateDPBaseline(base_template)
