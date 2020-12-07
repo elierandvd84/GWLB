@@ -64,7 +64,6 @@ def CalculateBasline(baseline_output,number_of_devices,vector):
         #print(base_list)
         return base_list
 
-
 def UpdateDPBaseline(baseline_template,dp_ip):
  
     username = "radware"
